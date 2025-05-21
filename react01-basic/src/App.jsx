@@ -1,23 +1,33 @@
-import { useState } from 'react'
 import './App.css'
-import ViewComponent from './component/ViewComponent';
-import WriteComponent from './component/WriteComponent';
-import ListComponent from './component/ListComponent';
 
 function App() {
-  const [mode, setMode] = useState('list');
-  let contents = '';
-  if(mode === "view"){
-    contents = <ViewComponent changeMode={(pmode) => {setMode(pmode)}}></ViewComponent>
-  } else if(mode === "write"){
-    contents = <WriteComponent changeMode={(pmode) => {setMode(pmode)}}></WriteComponent>
-  } else{
-    contents = <ListComponent changeMode={(pmode) => {setMode(pmode)}}></ListComponent>
-  }
+  const mystyle = {
+    color : "white",
+    backgroundColor : "DodgerBlue",
+    padding : "10px",
+    fontfamily : "Verdana"
+  };
+
   return (
     <div className='App'>
-      <h1>React - 모듈화</h1>
-      {contents}
+      <h1>React - Style 지정하기</h1>
+      <ol>
+        <li style={{color : "red"}}>프론트엔드</li>
+          <ul style={mystyle}>
+            <li>HTML5</li>
+            <li>CSS3</li>
+            <li>Javascript</li>
+            <li>JQuery</li>
+          </ul>
+        <li className='backEnd'>백엔드</li>
+        <ul>
+          <li id='backEndSub'>Java</li>
+          {/* <li class='warnings'>Oracle</li> */}
+          <li className='warnings'>Oracle</li>
+          <li>JSP</li>
+          <li>Spring boot</li>
+        </ul>
+      </ol>
     </div>
   )
 }
