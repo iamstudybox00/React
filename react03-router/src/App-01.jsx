@@ -1,0 +1,85 @@
+import './App.css'
+import { Link, NavLink, Route, Routes } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+
+const TopNavi = () =>{
+  return(
+    <nav>
+      <NavLink to="/">HOME</NavLink>&nbsp;
+      <NavLink to="/intro">인트로</NavLink>&nbsp;
+      <NavLink to="/intro/router">Router관련Hook</NavLink>&nbsp;
+      <NavLink to="/xyz">잘못된URL</NavLink>&nbsp;
+    </nav>
+  );
+}
+
+const CommonLayout = () =>{
+  return(
+    <div>
+      <header style={{background: 'lightgray', padding: '10px'}}>
+        Outlet 컴포넌트 알아보기
+      </header>
+      <article>
+        <Outlet />
+        <footer style={{background: 'lightgray', padding: '10px'}}>
+          공통 레이아웃
+        </footer>
+      </article>
+    </div>
+  );
+}
+
+const Home = () =>{
+  return(<>
+    <h2>React Home</h2>
+    <p>
+      Reacct Router에 대해 학습합니다.
+    </p>
+  </>);
+}
+
+const LayoutIndex = () =>{
+  return(<>
+    <h2>레이아웃 인덱스 페이지</h2>
+    <ul>
+      <li>Outlet 컴포넌트 위치에 출력됩니다.</li>
+      <li>Route 설정시 index로 지정합니다.</li>
+    </ul>
+  </>);
+}
+
+const RouterHooks = () =>{
+  return(<>
+    <h2>라우터 관련 Hook</h2>
+  </>);
+}
+
+const NonFound = () =>{
+  return(<>
+    <h2>Not Found</h2>
+    <p>
+      페이지를 찾을 수 없습니다. TT <br/>
+      <Link to='/'>Home</Link>
+
+    </p>
+  </>);
+}
+
+function App() {
+
+  return (
+    <div className='App'>
+      <TopNavi></TopNavi>
+      <Routes>
+        <Route path='/' element={<Home></Home>} />
+        <Route path='/intro' element={<CommonLayout />}>
+          <Route index element={<LayoutIndex />} />
+          <Route path="router" element={<RouterHooks />} />
+        </Route>
+        <Route path='*' element={<NonFound></NonFound> } />
+      </Routes>
+    </div>
+  )
+}
+
+export default App
