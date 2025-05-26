@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 function View(props){
   var params = useParams();
   console.log("idx", params.idx);
+
+  const navigate = useNavigate();
 
   let[boardData, setBoardData] = useState({});
   let requestUrl = "http://nakja.co.kr/APIs/php7/boardViewJSON.php";
@@ -30,8 +32,31 @@ function View(props){
     </header>
     <nav>
       <Link to="/list">목록</Link>&nbsp;
-      <Link to={"/edit/" + params.no}>수정</Link>&nbsp;
-      <Link to="/delete">삭제</Link>
+      <Link to={"/edit/" + params.idx}>수정</Link>&nbsp;
+      <Link onClick={() =>{
+        console.log('삭제 idx', params.idx)
+        fetch("http://nakja.co.kr/APIs/php7/boardDeleteJSON.php", {
+            method : 'POST',
+            headers : {
+              'Content-type' : 'application/x-www-form-urlencoded;charset=UTF-8'
+            },
+            body: new URLSearchParams({
+              apikey : '55a897913f7fe3e8d54f6346c07ccd4b',
+              tname : 'nboard_news',
+              idx : params.idx,
+            }),
+        })
+        .then((result) => result.json())
+        .then((json) => {
+          console.log(json);
+          if(json.result === 'success'){
+            alert('삭제되었습니다.');
+            navigate("/list");
+          } else{
+            alert('삭제에 실패했습니다.')
+          }
+        });
+      }}>삭제</Link>
     </nav>
     <article>
       <table id="boardTable">
@@ -45,7 +70,7 @@ function View(props){
           </tr>
           <tr>
             <td>제목</td>
-            <td>{boardData.name}</td>
+            <td>{boardData.subject}</td>
           </tr>
           <tr>
             <td>날짜</td>

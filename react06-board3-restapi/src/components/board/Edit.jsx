@@ -3,14 +3,15 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 function Edit(props){
+  console.log(props);
   const navigate = useNavigate();
   let params = useParams();
   console.log('수정idx', params.idx);
 
-  let requestUrl = "http://nakja.co.kr/APIs/php7/boardEditJSON.php";
+  let requestUrl = "http://nakja.co.kr/APIs/php7/boardViewJSON.php";
   let parameter = "apikey=55a897913f7fe3e8d54f6346c07ccd4b&tname=nboard_news&idx=" + params.idx;
 
-  const [write, setWriter] = useState('');
+  const [writer, setWriter] = useState('');
   const [title, setTitle] = useState('');
   const [contents, setContents] = useState('');
 
@@ -20,27 +21,21 @@ function Edit(props){
         return result.json();
       })
       .then((json) =>{
-        console.log(json)
+        console.log(json);
+        setWriter(json.name);
+        setTitle(json.subject);
+        setContents(json.content);
       });
-  })
 
-  console.log("파라미터", params.no);
-  let pno = Number(params.no);
+      return () => {
+        console.log('useEffect실행 ==> 컴포넌트 언마운트');
 
-  let vi = boardData.reduce((prev, curr) =>{
-    if(curr.no === pno){
-      prev = curr;
-    }
-    return prev;
-  }, {})
-
-  const [title, setTitle] = useState(vi.title);
-  const [writer, setWriter] = useState(vi.writer);
-  const [contents, setContents] = useState(vi.contents);
+      }
+  }, []);
 
   return(<>
     <header>
-      <h2>게시판 작성</h2>
+      <h2>게시판-수정</h2>
     </header>
     <nav>
       {/* <a href="/list">목록</a>&nbsp; */}
@@ -51,23 +46,33 @@ function Edit(props){
         (event) =>{
           event.preventDefault();
 
+          let i = event.target.idx.value;
           let w = event.target.writer.value;
           let t = event.target.title.value;
           let c = event.target.contents.value;
 
-          let editBoardData = {no:pno, writer:w, title:t, contents:c, date:nowDate()};
+          fetch('http://nakja.co.kr/APIs/php7/boardEditJSON.php', {
+            method : 'POST',
+            headers : {
+              'Content-type' : 'application/x-www-form-urlencoded;charset=UTF-8'
+            },
+            body: new URLSearchParams({
+              apikey : '55a897913f7fe3e8d54f6346c07ccd4b',
+              tname : 'nboard_news',
+              id : 'jsonAPI',
+              name : w,
+              subject : t,
+              content : c,
+              idx : i,
+            }),
+          })
+          .then((response) => response.json())
+          .then((json) => console.log(json));
 
-          let copyBoardData = [...boardData];
-          for(let i = 0; i < copyBoardData.length; i++){
-            if(copyBoardData[i].no === pno){
-              copyBoardData[i] = editBoardData;
-            }
-          }
-
-          setBoardData(copyBoardData);
-          navigate("/list");
+          navigate("/view/" + params.idx);
         }
       }>
+        <input type='hidden' name='idx' value={params.idx} />
         <table id="boardTable">
           <colgroup>
             <col width="30%" /><col width="*" />
